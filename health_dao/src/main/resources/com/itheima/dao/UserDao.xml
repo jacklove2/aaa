@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.UserDao">
+    <select id="findByUsername" parameterType="String" resultMap="RolePerssionMap">
+  SELECT u.id,u.username,u.password,
+    ur.role_id,r.keyword as role_keyword,
+    rp.permission_id,p.keyword as permission_keword
+FROM t_user u,t_user_role ur,t_role r,t_role_permission rp,t_permission p
+WHERE u.id=ur.user_id and ur.role_id=r.id
+and r.id=rp.role_id and rp.permission_id=p.id
+and u.username=#{username};
+</select>
+    <resultMap id="RolePerssionMap" type="User">
+        <!--users-->
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <!--roles-->
+        <collection property="roles" ofType="Role">
+            <result property="id" column="role_id"></result>
+            <result property="keyword" column="role_keyword"></result>
+            <!--Permissions-->
+            <collection property="permissions" ofType="Permission">
+                <result property="id" column="permission_id"></result>
+                <result property="keyword" column="permission_keword"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+</mapper>

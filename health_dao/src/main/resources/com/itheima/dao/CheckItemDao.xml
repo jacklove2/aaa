@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.CheckItemDao">
+    <!--添加检查项-->
+    <insert id="save" parameterType="CheckItem">
+        insert into t_checkitem values
+        (null,#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention})
+    </insert>
+    <!--分页所有检查项-->
+    <select id="findAll" parameterType="String" resultType="CheckItem">
+        SELECT * FROM t_checkitem
+        <if test="value!=null and value.length >0">
+            where CODE LIKE #{value} OR NAME LIKE #{value}
+        </if>
+    </select>
+    <!--查询检查项-->
+    <select id="findAllCheckitem" resultType="CheckItem">
+        SELECT * from t_checkitem
+    </select>
+    <!--删除检查项-->
+    <select id="findCountByCheckItemId" parameterType="int" resultType="int">
+        select count(1) from t_checkgroup_checkitem where checkitem_id=#{id}
+    </select>
+    <delete id="deleById" parameterType="int">
+        delete from t_checkitem where id=#{id}
+    </delete>
+    <!--编辑检查项-->
+    <select id="findCheckItmeById" parameterType="int" resultType="CheckItem">
+        select * from t_checkitem where id=#{id}
+    </select>
+    <update id="updataCheckItme" parameterType="CheckItem">
+        UPDATE t_checkitem
+        <set>
+            CODE=#{code},NAME=#{name},sex=#{sex},age=#{age},price=#{price},TYPE=#{type},remark=#{remark},attention=#{attention}
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

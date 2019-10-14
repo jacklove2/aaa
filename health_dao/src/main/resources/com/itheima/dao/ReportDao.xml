@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.ReportDao">
+    <select id="getPackageReport" resultType="map">
+            SELECT o.package_id, p.name,count(1) as value
+            from t_order o,t_package p
+            WHERE o.package_id=p.id
+            GROUP BY o.package_id;
+    </select>
+
+</mapper>

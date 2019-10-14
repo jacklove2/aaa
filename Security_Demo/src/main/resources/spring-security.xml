@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--重要重要重要：所有的路径必须以/打头-->
+    <!--静态资源过滤, 不需要登陆就可以访问-->
+    <!--pattern 匹配的规则 security=none 无须认证-->
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/fail.html" security="none"/>
+
+    <!--拦截HTTP请求
+    auto-config: 自动配置 true, 帮我们生成登陆页面，login处理。。。。
+    use-expressions: 是否使用spring el表达式 false：不使用, access 的值必须是ROLE_打头，否则报错
+                                             true: 不能使用字符串, hasA.... hasRole.....
+    -->
+    <security:http auto-config="true" use-expressions="false">
+        <!--
+            intercept-url: 拦截的配置
+            pattern: 拦截的规则 /** 所有路径js css html,.do
+            access: 访问，用户具有access配置的角色，或 use-expressions=true 拥有相应的权限，就可以访问
+        -->
+        <security:intercept-url pattern="/**" access="ROLE_ADMIN"/>
+        <!--登陆的配置信息
+            login-page: 登陆页面在哪 url
+            username-parameter: 登陆时提交的用户名的参数名称， security通过request.getParameter( username-parameter)
+            password-parameter: 同username-parameter
+            default-target-url: 登陆成功后默认跳转的url， 登陆成功后会跳转原来的页面，如果原来的页面是login.html就会跳转默认页面
+            always-use-default-target: true，不管原来是哪个页面过来登陆的，都跳转到默认页面，一般为false
+            authentication-failure-url: 登陆失败跳转的页面
+            authentication-success-forward-url: 一般不用，登陆成功后请求转发的url，一旦配置了这个，则default-target-url效
+            login-processing-url: 处理登陆认证的url
+        -->
+        <security:form-login
+            login-page="/login.html"
+            login-processing-url="/login.do"
+            username-parameter="username"
+            password-parameter="password"
+            default-target-url="/index.html"
+            always-use-default-target="false"
+            authentication-failure-url="/fail.html"
+        />
+        <!--禁止跨域访问的限制-->
+        <security:csrf disabled="true"/>
+        <!--logout-url 处理退出登陆的请求，
+            logout-success-url: 退出成功后跳转的页面
+            invalidate-session: session失效
+        -->
+        <security:logout logout-url="/logout.do" logout-success-url="/login.html" invalidate-session="true"/>
+    </security:http>
+    <!--认证授权管理器-->
+    <security:authentication-manager>
+        <!--认证信息提供，提供认证用户信息，执行登陆认证
+        user-service-ref: 用户信息可以由这个来提供，引用了容器的bean对象来提供, securityUserService
+        securityUserService必须实现一个接口UserDetailService
+        -->
+        <security:authentication-provider user-service-ref="securityUserService">
+            <!--使用密码加密器-->
+            <!--<security:password-encoder ref="encoder"/>-->
+            <!---->
+                    <!--写死用户名与密码及所拥有的 角色-->
+            <!--{noop} 不操作，不加密，明文-->
+            <!--authorities: 这个用户所拥有的角色,些时的角色必须与intercept-url中的access一样-->
+            <security:user-service>
+
+                <security:user name="admin" password="{noop}admin" authorities="ROLE_ADMIN"/>
+
+            </security:user-service>
+
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="securityUserService" class="com.itheima.security.securityUserServiceImpl"/>
+    <!--<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>-->
+</beans>

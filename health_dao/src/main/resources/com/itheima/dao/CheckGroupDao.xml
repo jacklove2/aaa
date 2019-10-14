@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.CheckGroupDao">
+    <!--插入检查组-->
+    <insert id="add" parameterType="CheckGroup">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+      insert into t_checkgroup values (null,#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+    </insert>
+    <!--向检查组和检查项的中间表插入数据-->
+    <insert id="addCheckGroupCheckItem" parameterType="int">
+        insert into t_checkgroup_checkitem values (#{checkGroupId},#{checkitemId})
+    </insert>
+    <!--分页数据的展示-->
+    <select id="findPage" parameterType="String" resultType="CheckGroup">
+        SELECT * FROM t_checkgroup
+        <if test="value!=null and value.length >0">
+            where CODE LIKE #{value} OR NAME LIKE #{value} or helpCode like #{value}
+        </if>
+    </select>
+    <!--查询检查组的检查项信息-->
+    <select id="findCheckItemIdsById" parameterType="int" resultType="int" >
+        SELECT checkitem_id FROM t_checkgroup_checkitem WHERE checkitem_id =#{id}
+    </select>
+    <!--查询检查组的基本信息-->
+    <select id="findById" parameterType="int" resultType="CheckGroup">
+      SELECT * FROM t_checkgroup where id=#{id}
+    </select>
+    <!--修改检查组的基本信息-->
+    <update id="update" parameterType="CheckGroup">
+      <selectKey keyProperty="id" resultType="int" order="AFTER">
+          select last_insert_id()
+      </selectKey>
+        UPDATE	t_checkgroup SET CODE=#{code},NAME=#{name},helpCode=#{helpCode},sex=#{sex},remark=#{remark},attention=#{attention}
+        WHERE id=#{id};
+    </update>
+    <!--更新中间表信息-->
+    <update id="updateCheckGroupCheckItem" parameterType="int">
+        UPDATE t_checkgroup_checkitem SET checkgroup_id=#{checkgroup_id},checkitem_id=#{checkitem_id} WHERE checkgroup_id=#{checkgroup_id}
+    </update>
+
+    <select id="findAll" resultType="CheckGroup">
+        select * from t_checkgroup
+    </select>
+</mapper>
