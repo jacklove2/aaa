@@ -37,6 +37,7 @@ public class LoginController {
     public Result loginCheck(@RequestBody Map<String, String> map, HttpServletResponse res) {
         String telephone = map.get("telephone");
         //获取验证码
+        //分支上的修改
         String code = map.get("validateCode");
         Jedis jedis = jedisPool.getResource();
         //获取手机号
