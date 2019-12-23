@@ -68,5 +68,6 @@ public class LoginController {
         res.addCookie(cookie); // 只要用户访问了网站，就会在请求头的Header中带上这个cookie参数
         return new Result(true, MessageConstant.LOGIN_SUCCESS);
         //测试aaa
+        //听说你很皮
     }
 }
