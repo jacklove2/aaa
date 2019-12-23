@@ -36,6 +36,7 @@ public class LoginController {
     @PostMapping("/check")
     public Result loginCheck(@RequestBody Map<String, String> map, HttpServletResponse res) {
         String telephone = map.get("telephone");
+        //获取验证码
         String code = map.get("validateCode");
         Jedis jedis = jedisPool.getResource();
         //获取手机号
@@ -47,7 +48,7 @@ public class LoginController {
             //验证为空,验证码过时或者没有点击获取验证码
             return new Result(false, MessageConstant.SENT_VALIDATECODE_ISNULL);
         }
-        //再判断验证是否匹配
+        //再判断验证是否匹配--
         if (!codeInRedis.equals(map.get("validateCode"))) {
             return new Result(false, MessageConstant.VALIDATECODE_ERROR);
         }
